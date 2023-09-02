@@ -1,27 +1,31 @@
 const mongoose = require('mongoose');
+const bcrypt   = require('bcrypt')
 
 const userSchema = new mongoose.Schema({
   // User's chosen username
-  username: { type: String, required: true, unique: true },
+  // username: { type: String, unique: true },
   
   // User's email address (used for verification and communication)
   email: { type: String, required: true, unique: true },
   
   // Hashed password for user authentication
-  password: { type: String, required: true },
+  password: { type: String },
   
   // Flag indicating whether the user's email has been verified
   isEmailVerified: { type: Boolean, default: false },
   
   // Code sent to the user's email for email verification
   verificationCode: String,
-  
+
+  // Expiration time for the verificationCode 
+  verificationCodeExpires: Date,
+
   // Token generated for password reset
   resetPasswordToken: String,
   
   // // Expiration date for the password reset token
   // resetPasswordTokenExpires: Date,
-}, { timeStamp: true});
+}, { timestamps: true});
 
 // Define a virtual property to serve as a unified identifier for username and email
 // user.identifier serves user._id if user.email or user.username is undefined or vice-versa
