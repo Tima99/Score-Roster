@@ -17,30 +17,24 @@ const { NUM }     = require('../../config/constants');
 
 async function isEmailVerified(req, res){
   
-  try{
-      const { email } = req.params
-      const user = await User.findOne({ email }) || await User.create({ email })
+    const { email } = req.params
+    const user = await User.findOne({ email }) || await User.create({ email })
 
-      if(user && user.isEmailVerified) return res.status(201).json({status: true, message: "Email verified", hasPassword: !!user.password })
+    if(user && user.isEmailVerified) return res.status(201).json({status: true, message: "Email verified", hasPassword: !!user.password })
       
-      const otpExpirationTime = NUM.OTP_EXPIRE_TIME; // 10 minutes
-      const { OTP, expirationTime } = GenerateOTP(otpExpirationTime)
+    const otpExpirationTime = NUM.OTP_EXPIRE_TIME; // 10 minutes
+    const { OTP, expirationTime } = GenerateOTP(otpExpirationTime)
       
-      // send otp on given email
-      await emailOTP(({ to: email, subject: "Verify your email", html: otpTemplate(OTP, otpExpirationTime) }))
+    // send otp on given email
+    await emailOTP(({ to: email, subject: "Verify your email", html: otpTemplate(OTP, otpExpirationTime) }))
 
-      // save otp in database
-      user.verificationCode         = OTP
-      user.verificationCodeExpires  = expirationTime
-      await user.save()
+    // save otp in database
+    user.verificationCode         = OTP
+    user.verificationCodeExpires  = expirationTime
+    await user.save()
 
-      res.status(201).json({status: false, message: `Otp sent on email ${email}`})
-    }catch(err){
-        console.log(`In file : ${__filename}`)
-        console.log(err.message)
-        
-        res.status(500).json({ message: "Internal Server Error"})
-    }
+    res.status(201).json({status: false, message: `Otp sent on email ${email}`})
+    
 } 
 
 /**
@@ -49,49 +43,38 @@ async function isEmailVerified(req, res){
  */
 
 async function OtpVerified(req, res, next){
-    try{
-        const { email, otp } = req.body
+    
+    const { email, otp } = req.body
 
-        const user = await User.findOne({ email })
-        if(!user || !user.verificationCode) return res.status(401).json({message: "Verification Failed"})
+    const user = await User.findOne({ email })
+    if(!user || !user.verificationCode) return res.status(401).json({message: "Verification Failed"})
 
         // console.log( user.verificationCodeExpires.toLocaleString())
         
-        if(Date.now() >= user.verificationCodeExpires.getTime()) return res.status(401).json({ message: "OTP has expired"})
-        if(user.verificationCode !== otp) return res.status(401).json({message: "OTP is not valid"})
+    if(Date.now() >= user.verificationCodeExpires.getTime()) return res.status(401).json({ message: "OTP has expired"})
+    if(user.verificationCode !== otp) return res.status(401).json({message: "OTP is not valid"})
 
 
-        user.verificationCode = null
-        await user.save()
+    user.verificationCode = null
+    await user.save()
 
-        req.user = user
-        next()
-    }catch(err){
-        console.log(err)
-        res.status(500).json({ message: "Internal Server Error"})
-    }
+    req.user = user
+    next()
+    
 }
 
 async function EmailVerified(req, res){
   const user = req.user
   user.isEmailVerified = true
-  user.save()
-  .then(_ => res.status(200).json({ message: "Email verified"}))
-  .catch(err => {
-    console.log(err)
-    res.status(500).json({ message: "Internal Server Error"})
-  })
+  await user.save()
+  res.status(200).json({ message: "Email verified"})
 }
 
 async function ResetPasswordVerified(req, res){
   const user = req.user
   user.isResetPasswordVerified = true
-  user.save()
-  .then(_ => res.status(200).json({ message: "Email verified for reset password"}))
-  .catch(err => {
-    console.log(err)
-    res.status(500).json({ message: "Internal Server Error"})
-  })
+  await user.save()
+  res.status(200).json({ message: "Email verified for reset password"})
 }
 
 /**
@@ -103,7 +86,7 @@ async function ResetPasswordVerified(req, res){
  */
 
 async function ResetPassword(req, res){
-  try{
+  
     const { password: newPassword, confirmPassword , email } = req.body
 
     const user = await User.findOne({ email })
@@ -123,13 +106,6 @@ async function ResetPassword(req, res){
 
 
     return res.status(201).json({ message: "Password reset sucessfully"})
-    
-  }catch(err){
-    console.log(`In file : ${__filename}`)
-    console.log(err.message)
-        
-    res.status(500).json({ message: "Internal Server Error"})
-  }
 }
 
 /**
@@ -151,45 +127,39 @@ async function AuthenticateUser(req, res) {
         });
     }
   
-    try {
-      // Check if the user exists
-      const user = await User.findOne({ email });
-  
-      if (!user || !user.isEmailVerified) {
-        return res.status(404).json({ message: 'Invalid User' });
-      }
-  
-      // Generate a JWT token
-      const access_token = jwt.sign({ userId: user._id }, JWT_AUTH_SECRET);
-      
-      // If the user does not have a password, save the given password
-      if (!user.password) {
-        // Hash the password using bcrypt
-        const hashedPassword = await bcrypt.hash(password, 10);
-  
-        // Update the user's password in the database
-        user.password = hashedPassword;
-        await user.save();
-  
-        // Set the token in a cookie (you may want to use a secure option in production)
-        setTokenToCookie(access_token)
-  
-        return res.status(201).json({ message: 'Password saved and token generated' });
-      }
-  
-      // If the user has a password, compare it with the given password
-      const passwordMatch = await user.verifyPassword(password)
-      if(!passwordMatch) return res.status(401).json({ message: 'Password does not match' });
-  
-      // Set the token in a cookie (you may want to use a secure option in production)
-      setTokenToCookie(access_token)
-  
-      return res.status(200).json({ message: 'Password matched and token generated' });
-      
-    } catch (error) {
-      console.error('Error:', error);
-      return res.status(500).json({ message: 'Internal Server error' });
+    // Check if the user exists
+    const user = await User.findOne({ email }); 
+
+    if (!user || !user.isEmailVerified) {
+      return res.status(404).json({ message: 'Invalid User' });
     }
+     
+    // Generate a JWT token
+    const access_token = jwt.sign({ userId: user._id }, JWT_AUTH_SECRET);
+
+    // If the user does not have a password, save the given password
+    if (!user.password) {
+      // Hash the password using bcrypt
+      const hashedPassword = await bcrypt.hash(password, 10); 
+      
+      // Update the user's password in the database
+      user.password = hashedPassword;
+      await user.save();  
+      
+      // Set the token in a cookie (you may want to use a secure option in production)
+      setTokenToCookie(access_token)  
+
+      return res.status(201).json({ message: 'Password saved and token generated' });
+    } 
+    // If the user has a password, compare it with the given password
+    const passwordMatch = await user.verifyPassword(password)
+    
+    if(!passwordMatch) return res.status(401).json({ message: 'Password does not match' }); 
+    
+    // Set the token in a cookie (you may want to use a secure option in production)
+    setTokenToCookie(access_token)  
+
+    return res.status(200).json({ message: 'Password matched and token generated' });  
 }
   
 /**
@@ -199,28 +169,23 @@ async function AuthenticateUser(req, res) {
 async function ResendOtp(req, res){
   const { email } = req.params
 
-  try{
-    const user = await User.findOne({ email })
+  
+  const user = await User.findOne({ email })
 
-    if(!user) return res.status(404).json({ message: "User not exists"})
+  if(!user) return res.status(404).json({ message: "User not exists"})
 
-    const otpExpirationTime = NUM.OTP_EXPIRE_TIME
-    const { OTP, expirationTime } = GenerateOTP(otpExpirationTime)
+  const otpExpirationTime = NUM.OTP_EXPIRE_TIME
+  const { OTP, expirationTime } = GenerateOTP(otpExpirationTime)
 
-    // send otp on given email
-    await emailOTP(({ to: email, subject: "Verify your email", html: otpTemplate(OTP, otpExpirationTime) }))
+  // send otp on given email
+  await emailOTP(({ to: email, subject: "Verify your email", html: otpTemplate(OTP, otpExpirationTime) }))
     
-    // save otp in database
-    user.verificationCode         = OTP
-    user.verificationCodeExpires  = expirationTime
-    await user.save()
+  // save otp in database
+  user.verificationCode         = OTP
+  user.verificationCodeExpires  = expirationTime
+  await user.save()
 
-    return res.status(200).json({ message: 'OTP sent sucessfully'})
-    
-  }catch(err){
-    console.log(err)
-    res.status(500).json({ message: "Internal Server Error"})
-  }
+  return res.status(200).json({ message: 'OTP sent sucessfully'})
 }
 
 module.exports = {
