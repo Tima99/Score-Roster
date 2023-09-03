@@ -20,8 +20,8 @@ const userSchema = new mongoose.Schema({
   // Expiration time for the verificationCode 
   verificationCodeExpires: Date,
 
-  // Token generated for password reset
-  resetPasswordToken: String,
+  // Token verified for password reset or not
+  isResetPasswordVerified: {type: Boolean, default: false},
   
   // // Expiration date for the password reset token
   // resetPasswordTokenExpires: Date,
