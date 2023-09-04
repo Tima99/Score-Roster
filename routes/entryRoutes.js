@@ -8,6 +8,8 @@ const {
     ResendOtp,
     ResetPassword
 } = require("../controllers/entryController");
+const limiter = require("express-rate-limit")
+const { resendOtpLimit } = require("../config/rateLimits")
 
 // Check email exists or verified , send otp if not verified and return false otherwise return true
 routes.get("/:email/status", isEmailVerified);
@@ -24,7 +26,10 @@ routes.post("/reset/otp/status", OtpVerified, ResetPasswordVerified);
 // reset password if email verified within otp expiry time
 routes.post("/reset/password", ResetPassword);
 
-// request for resend / send otp 
-routes.get("/resend/otp/:email", ResendOtp);
+// one request for resend / send otp on every 30 seconds
+routes.get("/resend/otp/:email", 
+    limiter(resendOtpLimit), 
+    ResendOtp
+);
 
 module.exports = routes;

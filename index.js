@@ -1,13 +1,15 @@
 require("./db");
 const express = require("express");
-const { PORT } = require("./config");
-const entryRoutes = require("./routes/entryRoutes");
+const limiter = require("express-rate-limit")
+const { PORT }= require("./config");
+const entryRoutes        = require("./routes/entryRoutes");
+const { entryRateLimit } = require("./config/rateLimits")
 
 const app = express();
 
-// Middleware
+// Middlewares
 app.use(express.json());
-app.use("/api", entryRoutes);
+app.use("/api", limiter(entryRateLimit), entryRoutes);
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ message: "Internal Server Error" });
