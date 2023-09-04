@@ -9,7 +9,7 @@
  * "Create Password" or "Enter Password"
  */
 
-const User        = require("../../models/user")
+const User        = require("../../models/User")
 const otpTemplate = require("../../templates/otpTemplate")
 const emailOTP    = require("../../utils/sendEmail")
 const GenerateOTP = require("../../utils/generateOTP")

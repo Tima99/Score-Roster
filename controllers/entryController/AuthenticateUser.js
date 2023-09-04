@@ -1,7 +1,7 @@
 /**
  *  password matched or created generate access_token using jsonwebtoken package 
  */
-const User                          = require("../../models/user")
+const User                          = require("../../models/User")
 const bcrypt                        = require('bcrypt');
 const jwt                           = require('jsonwebtoken');
 const { JWT_AUTH_SECRET, NODE_ENV } = require('../../config');

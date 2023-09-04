@@ -1,15 +1,19 @@
 require("./db");
-const express = require("express");
-const limiter = require("express-rate-limit")
-const { PORT }= require("./config");
+const express       = require("express");
+const limiter       = require("express-rate-limit")
+const cookieParser  = require("cookie-parser")
+const { PORT }      = require("./config");
 const entryRoutes        = require("./routes/entryRoutes");
+const playerRoutes       = require("./routes/playerRoutes");
 const { entryRateLimit } = require("./config/rateLimits")
 
 const app = express();
 
 // Middlewares
 app.use(express.json());
+app.use(cookieParser())
 app.use("/api", limiter(entryRateLimit), entryRoutes);
+app.use("/api", playerRoutes);
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ message: "Internal Server Error" });
@@ -19,7 +23,7 @@ app.use((err, req, res, next) => {
 app.listen(PORT, (_) => console.log(`Server is running on port ${PORT}`));
 
 // Routes
-app.get("/", (_, res) => res.send("Welcome Hero, Your site is live 😍😍!"));
+app.get("/", (_, res) => res.send("Welcome Buddy, Your site is live 😍😍!"));
 
 // wrap all handlers with try / catch block
 function asyncErrorsWraper(handler) {
@@ -29,7 +33,8 @@ function asyncErrorsWraper(handler) {
     };
 }
 
-entryRoutes.stack.forEach(layer => {
+const routes = [...entryRoutes, ...playerRoutes]
+routes.stack.forEach(layer => {
     if (layer.route) {
         layer.route.stack.forEach((routeHandler) => {
             routeHandler.handle = asyncErrorsWraper(routeHandler.handle);

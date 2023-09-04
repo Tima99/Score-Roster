@@ -6,7 +6,7 @@
  * 3) Email must be verified before reset password
  */
 
-const User    = require("../../models/user")
+const User    = require("../../models/User")
 const bcrypt  = require('bcrypt');
 
 async function ResetPassword(req, res){

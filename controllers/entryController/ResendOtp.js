@@ -3,7 +3,7 @@
  * Resend / send Otp
  */
 
-const User        = require("../../models/user")
+const User        = require("../../models/User")
 const { NUM }     = require('../../config/constants');
 const GenerateOTP = require("../../utils/generateOTP")
 const otpTemplate = require("../../templates/otpTemplate")

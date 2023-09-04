@@ -7,7 +7,7 @@
  * 2) Update values in db acc. to their need  
  */
 
-const User = require("../../models/user")
+const User = require("../../models/User")
 
 async function OtpVerified(req, res, next){
     
