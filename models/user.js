@@ -1,6 +1,15 @@
 const mongoose = require('mongoose');
 const bcrypt   = require('bcrypt')
 
+const refreshTokenSchema = new mongoose.Schema({
+  token: String,
+  device: {
+    agent: String,
+    origin: String,
+  },
+  _id: false
+});
+
 const userSchema = new mongoose.Schema({
   // User's chosen username
   // username: { type: String, unique: true },
@@ -22,6 +31,9 @@ const userSchema = new mongoose.Schema({
 
   // Token verified for password reset or not
   isResetPasswordVerified: {type: Boolean, default: false},
+
+  // store refresh_token by whom its assign for security concern
+  refreshTokens: [refreshTokenSchema]
   
   // // Expiration date for the password reset token
   // resetPasswordTokenExpires: Date,
@@ -41,6 +53,28 @@ userSchema.methods.verifyPassword = async function(password) {
   } catch (error) {
     console.error('Error while verifying password:', error?.message || error);
     return false;
+  }
+};
+
+// Method to generate and store a new refresh token
+userSchema.methods.storeRefreshToken = async function (token, agent, origin) {
+  try {
+    // Add the new token to the refreshTokens array
+    this.refreshTokens.push({
+      token,
+      device: {
+        agent,
+        origin,
+      },
+    });
+
+    // Save the user document with the new refresh token
+    await this.save();
+
+    return true;
+  } catch (error) {
+    console.error('Error while generating and storing refresh token:', error);
+    throw error;
   }
 };
 

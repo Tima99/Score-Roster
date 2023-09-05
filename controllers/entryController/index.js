@@ -12,4 +12,5 @@ module.exports = {
     OtpVerified,
     EmailVerified,
     ResetPasswordVerified,
+    RefreshToken: require('./RefreshToken')
 };

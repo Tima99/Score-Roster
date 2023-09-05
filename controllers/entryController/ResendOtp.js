@@ -4,7 +4,7 @@
  */
 
 const User        = require("../../models/User")
-const { NUM }     = require('../../config/constants');
+const { NUM }     = require('../../constants');
 const GenerateOTP = require("../../utils/generateOTP")
 const otpTemplate = require("../../templates/otpTemplate")
 const emailOTP    = require("../../utils/sendEmail")

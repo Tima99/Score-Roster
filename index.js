@@ -33,8 +33,8 @@ function asyncErrorsWraper(handler) {
     };
 }
 
-const routes = [...entryRoutes, ...playerRoutes]
-routes.stack.forEach(layer => {
+const routes = [...entryRoutes.stack, ...playerRoutes.stack]
+routes.forEach(layer => {
     if (layer.route) {
         layer.route.stack.forEach((routeHandler) => {
             routeHandler.handle = asyncErrorsWraper(routeHandler.handle);

@@ -13,7 +13,7 @@ const User        = require("../../models/User")
 const otpTemplate = require("../../templates/otpTemplate")
 const emailOTP    = require("../../utils/sendEmail")
 const GenerateOTP = require("../../utils/generateOTP")
-const { NUM }     = require('../../config/constants');
+const { NUM }     = require('../../constants');
 
 async function isEmailVerified(req, res){
   
