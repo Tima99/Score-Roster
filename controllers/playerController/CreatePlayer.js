@@ -1,20 +1,50 @@
-async function CreatePlayer(req, res){
-    // req.body.email = req.body?.email || req.user?.email
+const Player = require("../../models/Player");
+const uploadFile = require("../../utils/uploadFile");
+const validateAvatar = require("../../utils/validateAvatar");
 
-    console.log(req.body, req.fileUrl)
+async function CreatePlayer(req, res) {
+    // gets fields value from req.body after parsed by multer
+    const { email, name, dob, location, role } = req.body;
 
-    const { email , avatar , name, dob, location, role }  = req.body
+    // file which multer parse and store it in memory we use buffer to saved it in aws s3
+    const file = req.file;
 
-    // await Player.create({
-    //     email,
-    //     name,
-    //     dob,
-    //     location,
-    //     role
-    // })
+    if(await Player.exists({ email })) return res.status(400).json({ message: "Player already exists"})
 
-    res.json({ message: "New Player created", req: req.body })
-    
+    const player = new Player({
+        email,
+        name,
+        dob,
+        location,
+        role,
+    });
+
+    const hasValidationError = player.validateSync();
+    const hasAvatarValid = validateAvatar(file);
+
+    if (hasValidationError || !hasAvatarValid) {
+        const avatarErrorMsg = `Error: Image validation error. ${file.mimetype} is not valid type.`;
+        console.log(hasValidationError?.message || avatarErrorMsg);
+        return res
+            .status(400)
+            .json({
+                message: "Player validation failed",
+                validationError: {
+                    ...hasValidationError?.errors,
+                    avatar: hasAvatarValid ? undefined : avatarErrorMsg,
+                },
+            });
+    }
+
+    // uploadFile(file) store avatar to aws s3 and returns stored file url
+    const fileUrl = await uploadFile(file);
+
+    // saved avatar url in db which store in aws s3
+    player.avatar = fileUrl;
+
+    await player.save();
+
+    return res.json({ message: "New Player created", player });
 }
 
-module.exports = CreatePlayer
+module.exports = CreatePlayer;

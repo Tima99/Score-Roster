@@ -12,4 +12,6 @@ const NUM ={
     OTP_EXPIRE_TIME : 10, // time in mins (10mins)
 }
 
-module.exports = {STORE, NUM}
+const AVATAR_FORMATS = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml']
+
+module.exports = {STORE, NUM, AVATAR_FORMATS}

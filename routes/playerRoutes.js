@@ -5,7 +5,6 @@ const {
     getPlayerMatchesList,
     getPlayerTeamsList
 } = require("../controllers/playerController")
-const uploadFile = require("../middlewares/uploadFile")
 
 // Create a player
 const multer = require('multer')
@@ -13,8 +12,8 @@ const multer = require('multer')
 const storage = multer.memoryStorage()
 const upload  = multer({ storage })
 
-
-routes.post('/player', upload.single('avatar'), uploadFile,  CreatePlayer)
+// create new player, assuming file type name is 'avatar'
+routes.post('/player', upload.single('avatar'),  CreatePlayer)
 
 // Fetch a specific player by ID
 routes.get('/players/:playerId', FetchPlayer)
