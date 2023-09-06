@@ -2,18 +2,23 @@ require("./db");
 const express       = require("express");
 const limiter       = require("express-rate-limit")
 const cookieParser  = require("cookie-parser")
-const { PORT }      = require("./config");
-const entryRoutes        = require("./routes/entryRoutes");
-const playerRoutes       = require("./routes/playerRoutes");
-const { entryRateLimit } = require("./config/rateLimits")
+const bodyParser    = require('body-parser');
+
+const { PORT }          = require("./config");
+const entryRoutes       = require("./routes/entryRoutes");
+const playerRoutes      = require("./routes/playerRoutes");
+const { entryRateLimit }= require("./config/rateLimits")
 
 const app = express();
 
 // Middlewares
 app.use(express.json());
 app.use(cookieParser())
-app.use("/api", limiter(entryRateLimit), entryRoutes);
+// app.use(bodyParser.urlencoded({ extended: false }))
+
 app.use("/api", playerRoutes);
+
+app.use("/api", limiter(entryRateLimit), entryRoutes);
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ message: "Internal Server Error" });
