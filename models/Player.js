@@ -14,6 +14,7 @@ const playerSchema = new mongoose.Schema({
     dob: { type: Date },
     location: String,
     role: {type: String, enum: ['raider', 'defender', 'all-rounder']},
+    gender: {type: String, enum: ['male', 'female', 'other'] },
 
     teams: [ { type: mongoose.Schema.Types.ObjectId , ref: 'Team'} ],
 

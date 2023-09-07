@@ -3,7 +3,9 @@ const {
     CreatePlayer,
     FetchPlayer,
     getPlayerMatchesList,
-    getPlayerTeamsList
+    getPlayerTeamsList,
+    UpdatePlayerAvatar, 
+    UpdatePlayerDetails
 } = require("../controllers/playerController")
 
 // Create a player
@@ -17,6 +19,12 @@ routes.post('/player', upload.single('avatar'),  CreatePlayer)
 
 // Fetch a specific player by ID
 routes.get('/players/:playerId', FetchPlayer)
+
+// Update a specific player avatar
+routes.put('/players/:playerId/avatar', upload.single('avatar'), UpdatePlayerAvatar)
+
+// Update a specific player details
+routes.put('/players/:playerId/details', UpdatePlayerDetails)
 
 // Get matches list for a specific player
 routes.get('/players/:playerId/matches', getPlayerMatchesList)

@@ -2,7 +2,6 @@ require("./db");
 const express       = require("express");
 const limiter       = require("express-rate-limit")
 const cookieParser  = require("cookie-parser")
-const bodyParser    = require('body-parser');
 
 const { PORT }          = require("./config");
 const entryRoutes       = require("./routes/entryRoutes");
@@ -14,7 +13,7 @@ const app = express();
 // Middlewares
 app.use(express.json());
 app.use(cookieParser())
-// app.use(bodyParser.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: true }))
 
 app.use("/api", playerRoutes);
 

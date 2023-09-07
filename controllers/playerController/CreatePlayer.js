@@ -4,7 +4,7 @@ const validateAvatar = require("../../utils/validateAvatar");
 
 async function CreatePlayer(req, res) {
     // gets fields value from req.body after parsed by multer
-    const { email, name, dob, location, role } = req.body;
+    const { email, name, dob, location, role, gender } = req.body;
 
     // file which multer parse and store it in memory we use buffer to saved it in aws s3
     const file = req.file;
@@ -17,6 +17,7 @@ async function CreatePlayer(req, res) {
         dob,
         location,
         role,
+        gender
     });
 
     const hasValidationError = player.validateSync();
