@@ -9,7 +9,7 @@ async function UpdatePlayerAvatar(req, res){
     const file = req.file
     const hasAvatarValid = validateAvatar(file);
 
-    if(!mongoose.isValidObjectId(playerId) || !hasAvatarValid) return res.sendStatus(400)
+    if(!mongoose.isValidObjectId(playerId) || !hasAvatarValid) return res.sendStatus(422)
     
     const player = await Player.findOne({ _id : new mongoose.Types.ObjectId(playerId) })
 

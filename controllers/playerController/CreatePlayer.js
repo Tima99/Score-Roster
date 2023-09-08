@@ -1,4 +1,5 @@
-const Player = require("../../models/Player");
+const Player  = require("../../models/Player");
+const Stat    = require("../../models/Stat");
 const uploadFile = require("../../utils/uploadFile");
 const validateAvatar = require("../../utils/validateAvatar");
 
@@ -42,6 +43,12 @@ async function CreatePlayer(req, res) {
 
     // saved avatar url in db which store in aws s3
     player.avatar = fileUrl;
+
+    // create empty stats
+    const stat = await Stat.create({})
+
+    // assigned statitics to player
+    player.stats = stat._id
 
     await player.save();
 

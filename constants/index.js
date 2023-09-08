@@ -4,7 +4,7 @@ const STORE = {
         EXPIRES_IN: '365d' 
     },
     ACCESS_TOKEN : {
-        EXPIRES_IN: 300 // 300seconds == 5 minutes 
+        EXPIRES_IN: 60 * 60 // 15 minutes 
     },
 }
 
