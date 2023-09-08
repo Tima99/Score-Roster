@@ -43,7 +43,7 @@ async function UploadFile(file) {
 
     return fileUrl
   } catch (error) {
-    console.error('Error uploading file to AWS S3:', error);
+    // console.error('Error uploading file to AWS S3:', error);
     return Promise.reject(error)
   }
 }

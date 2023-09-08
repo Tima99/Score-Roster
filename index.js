@@ -21,7 +21,8 @@ app.use("/api", playerRoutes);
 app.use("/api", limiter(entryRateLimit), entryRoutes);
 app.use("/api", teamRoutes);
 app.use((err, req, res, next) => {
-    console.error(err.stack);
+    const errBoundary = '='.repeat(25)
+    console.error(`${errBoundary}\n${err.stack}\n${errBoundary}`);
     res.status(500).json({ message: "Internal Server Error" });
 });
 
