@@ -3,6 +3,7 @@ const uploadFile = require("../../utils/uploadFile")
 const Player = require("../../models/Player") 
 const Stat = require("../../models/Stat") 
 const Team = require("../../models/Team") 
+const { NODE_ENV } = require("../../config")
 
 async function CreateTeam(req, res){
     const {email: userEmail} = req._user
@@ -51,7 +52,11 @@ async function CreateTeam(req, res){
     // add new team to player's teams array
     await player.newTeam(team._id)
 
-    res.json({ message: "New Team Created", team: {...team.toObject(), players: [{...player.toObject()}]} })
+    res.json({ 
+        message: "New Team Created", 
+        pictureStatus: NODE_ENV === "development" && fileUrl || "Networking Issues (Not uploaded)", 
+        team: {...team.toObject(), players: [{...player.toObject()}]},
+    })
 }
 
 module.exports = CreateTeam

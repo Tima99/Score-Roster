@@ -1,8 +1,9 @@
 
-const AWS            = require('aws-sdk');
-const BUCKET         = require('../config/s3bucket');
-const { v4: uuidv4 } = require('uuid');
-const { S3_ACCESS_KEY, S3_SECERT_KEY }= require("../config")
+const AWS                             = require('aws-sdk');
+const BUCKET                          = require('../config/s3bucket');
+const { v4: uuidv4 }                  = require('uuid');
+const os                              = require('os')
+const { S3_ACCESS_KEY, S3_SECERT_KEY, NODE_ENV }= require("../config")
 
 // Create an S3 client
 const s3 = new AWS.S3({
@@ -16,6 +17,15 @@ const s3 = new AWS.S3({
 // Define a middleware to upload the file to s3 bucket
 async function UploadFile(file) {
   try {
+    /* // ^ only for development purposes: 
+        checking is system connected with wi-fi
+        if not don't save file and returns null 
+    */    
+    if(NODE_ENV === "development"){
+      const hasWiFi = os.networkInterfaces()["Wi-Fi"]
+      if(!hasWiFi) return null
+    }
+
     // Extract the file data from the request body
     const fileData          = file.buffer; // Assuming the field name is 'avatar'
     const originalFileName  = file.originalname; // Assuming the field name is 'fileName'

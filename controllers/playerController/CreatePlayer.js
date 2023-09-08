@@ -2,6 +2,7 @@ const Player  = require("../../models/Player");
 const Stat    = require("../../models/Stat");
 const uploadFile = require("../../utils/uploadFile");
 const validateAvatar = require("../../utils/validateAvatar");
+const { NODE_ENV } = require("../../config")
 
 async function CreatePlayer(req, res) {
     // gets fields value from req.body after parsed by multer
@@ -52,7 +53,11 @@ async function CreatePlayer(req, res) {
 
     await player.save();
 
-    return res.json({ message: "New Player created", player });
+    return res.json({ 
+        message: "New Player created", 
+        pictureStatus: NODE_ENV === "development" && fileUrl || "Networking Issues (Not uploaded)", 
+        player, 
+    });
 }
 
 module.exports = CreatePlayer;
