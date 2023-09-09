@@ -3,5 +3,6 @@ module.exports = {
     FetchTeam: require('./FetchTeam'),
     UpdateTeamLogo: require('./UpdateTeamLogo'),
     UpdateTeamDetails: require('./UpdateTeamDetails'),
-    AddPlayers: require("./AddPlayers")
+    AddPlayers: require("./AddPlayers"),
+    RemovePlayers: require("./RemovePlayers"),
 }

@@ -5,7 +5,8 @@ const {
     FetchTeam,
     UpdateTeamLogo, 
     UpdateTeamDetails, 
-    AddPlayers
+    AddPlayers,
+    RemovePlayers
 } = require("../controllers/teamController")
 
 const multer  = require('multer')
@@ -26,8 +27,9 @@ routes.use(verifyAccessToken)
 // create new Team, assuming file type name is 'logo'
 routes.post('/team', upload.single('logo'),  CreateTeam)
 
-// admin or captain have access to add players (array of players) in team
+// admin or captain have access to add players (array of players) in team or remove from team
 routes.post("/players/:teamId", isAdminOrCaptain, AddPlayers)
+routes.delete("/players/:teamId", isAdminOrCaptain, RemovePlayers)
 
 // only admin of team can modify team
 routes.use(verifyTeamAdmin)
