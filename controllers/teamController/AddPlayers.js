@@ -20,7 +20,7 @@ module.exports = async function (req, res) {
 
     const added = await Player.updateMany(
         { _id: { $in: playersOid } },
-        { $push: { teams: [team._id] } }
+        { $push: { teams: [team._id] }, $pull: { pastTeams: team._id }, }
     );
 
     res.json({ invalidPlayers, team: updatedTeam, added });
