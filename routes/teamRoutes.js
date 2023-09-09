@@ -1,10 +1,11 @@
 const routes = require("express").Router()
-const {verifyAccessToken, verifyTeamAdmin} = require("../middlewares")
+const {verifyAccessToken, verifyTeamAdmin, isAdminOrCaptain} = require("../middlewares")
 const {
     CreateTeam,
     FetchTeam,
     UpdateTeamLogo, 
     UpdateTeamDetails, 
+    AddPlayers
 } = require("../controllers/teamController")
 
 const multer  = require('multer')
@@ -24,6 +25,9 @@ routes.use(verifyAccessToken)
 
 // create new Team, assuming file type name is 'logo'
 routes.post('/team', upload.single('logo'),  CreateTeam)
+
+// admin or captain have access to add players (array of players) in team
+routes.post("/players/:teamId", isAdminOrCaptain, AddPlayers)
 
 // only admin of team can modify team
 routes.use(verifyTeamAdmin)

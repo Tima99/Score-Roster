@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 const { ACCESS_TOKEN_SECRET } = require('../config')
 const mongoose = require('mongoose');
 const User = require('../models/User');
+const Player = require('../models/Player');
 
 async function verifyAccessToken(req, res, next){
     try{
@@ -20,6 +21,10 @@ async function verifyAccessToken(req, res, next){
         
         // save it in req for use of next handler 
         req._user = user
+
+        // extract player from db using user.email
+        const player = await Player.findOne({ email: user.email }, {name: 1, avatar: 1, teams: 1})
+        req._player = player
 
         next()
     }catch(err){

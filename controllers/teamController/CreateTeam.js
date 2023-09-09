@@ -6,8 +6,6 @@ const Team = require("../../models/Team")
 const { NODE_ENV } = require("../../config")
 
 async function CreateTeam(req, res){
-    const {email: userEmail} = req._user
-
     // admin of team is one who create team
     // for captain, admin has an option to becomes captain itself during creation of team 
     // allowAdminAsCaptain convert to boolean to indicate whether or not admin wants to captain or not
@@ -18,8 +16,8 @@ async function CreateTeam(req, res){
     const isValidLogo = validateAvatar(logo)
     if(!isValidLogo) return res.status(422).json({ message: "Invalid data"})
     
-    // needed teams array so later on added _id of created team using method newTeam methods 
-    const player = await Player.findOne({ email: userEmail }, {name: 1, avatar: 1, teams: 1})
+    // get player from req._user which set by middleware 
+    const player = req._player
 
     if(!player) return res.sendStatus(404)
 
