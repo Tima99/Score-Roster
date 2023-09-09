@@ -5,4 +5,5 @@ module.exports = {
     UpdateTeamDetails: require('./UpdateTeamDetails'),
     AddPlayers: require("./AddPlayers"),
     RemovePlayers: require("./RemovePlayers"),
+    DeleteTeam: require("./DeleteTeam"),
 }

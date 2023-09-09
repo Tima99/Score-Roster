@@ -6,7 +6,8 @@ const {
     UpdateTeamLogo, 
     UpdateTeamDetails, 
     AddPlayers,
-    RemovePlayers
+    RemovePlayers,
+    DeleteTeam
 } = require("../controllers/teamController")
 
 const multer  = require('multer')
@@ -39,5 +40,8 @@ routes.put('/teams/:teamId/logo', upload.single('logo'), UpdateTeamLogo)
 
 // Update a specific Team details
 routes.put('/teams/:teamId/details', UpdateTeamDetails)
+
+// Delete Team if they played no matches
+routes.delete("/teams/:teamId", DeleteTeam)
 
 module.exports = routes
