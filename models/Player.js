@@ -17,6 +17,7 @@ const playerSchema = new mongoose.Schema({
     gender: {type: String, enum: ['male', 'female', 'other'] , lowercase: true },
 
     teams: [ { type: mongoose.Schema.Types.ObjectId , ref: 'Team'} ],
+    opponents: [ { type: mongoose.Schema.Types.ObjectId , ref: 'Team'} ],
 
     // if player remove or exit from team it will go to pastTeams array from teams arrays
     pastTeams: [ { type: mongoose.Schema.Types.ObjectId , ref: 'Team', select: 0} ],

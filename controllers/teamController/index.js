@@ -7,4 +7,5 @@ module.exports = {
     RemovePlayers: require("./RemovePlayers"),
     DeleteTeam: require("./DeleteTeam"),
     FetchMatches: require("./FetchMatches"),
+    RefreshSecurityCode: require("./RefreshSecurityCode"),
 }

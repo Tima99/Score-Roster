@@ -4,5 +4,6 @@ module.exports = {
     FetchMatches: require('./FetchMatches'),
     getPlayerTeamsList: require('./getPlayerTeamsList'),
     UpdatePlayerAvatar: require('./UpdatePlayerAvatar'),
-    UpdatePlayerDetails: require('./UpdatePlayerDetails')
+    UpdatePlayerDetails: require('./UpdatePlayerDetails'),
+    VerifySecurityCode: require('./VerifySecurityCode')
 }

@@ -1,6 +1,7 @@
 const {
     Types: { ObjectId },
     isValidObjectId,
+    isEquals
 } = require("mongoose");
 const Match = require("../../models/Match");
 const Player = require("../../models/Player");
@@ -20,6 +21,12 @@ module.exports = async function (req, res) {
     // } = req.body;
 
     let { teamA, teamB, scorer, scheduleTime } = req.body;
+    const player = req._player
+    
+    // opponent should verified on first match
+    const isAlreadyVerified = Array.isArray(player?.opponents) && player.opponents.find(id => isEquals(teamA._id, id) || isEquals(teamB._id, id) )
+    if(!isAlreadyVerified) return res.status(400).json({ message: "Please verify opponent first"})
+
 
     if (!(teamA?._id && teamB?._id))
         return res

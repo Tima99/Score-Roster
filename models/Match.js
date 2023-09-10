@@ -96,7 +96,7 @@ const matchSchema = new mongoose.Schema(
 
 matchSchema.pre("save", async function(){
     try{
-        console.log("Saving docs...")
+        // console.log("Saving docs...")
         this.remainDuration = this.tDuration
         // define Date.now() in scheduleTime if its false
         !!this.scheduleTime || (this.scheduleTime = Date.now())

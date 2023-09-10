@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const { Types: { ObjectId }, isValidObjectId , isEquals} = mongoose
 const Stat = require('./Stat')
+const crypto = require('crypto')
 
 const teamPlayerSchema = new mongoose.Schema({
     _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Player'},
@@ -17,8 +18,25 @@ const teamSchema = new mongoose.Schema({
     players: [teamPlayerSchema],
     pastPlayers: {type: [teamPlayerSchema], select: 0}, // store players those removed from the team 
     matches: [ {type: mongoose.Schema.Types.ObjectId, ref: 'Match'} ],
-    stats: { type: mongoose.Schema.Types.ObjectId, ref: 'Stat'}
+    stats: { type: mongoose.Schema.Types.ObjectId, ref: 'Stat'},
+    // this field use for security purposes 
+    // one use case is when anyone needs to enter security code of team before battle with team
+    securityCode: { type: String }
 }, {timestamps: true})
+
+
+// add security code to team befor save
+function GenerateSecurityCode(){
+    const randomNums = (num) => crypto.randomBytes(num).toString('hex')
+    const securityCode = `${randomNums(2)}_${randomNums(1)}`
+    return securityCode
+}
+
+teamSchema.pre('save', function() {
+    const code = GenerateSecurityCode()
+    this.securityCode = code
+    return [this, code]
+})
 
 // populate and structure players array return team 
 teamSchema.query.populatePlayers = async function(){

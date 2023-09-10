@@ -1,13 +1,11 @@
-const Stat    = require("../../models/Stat")
 const Team    = require("../../models/Team")
 const Player  = require("../../models/Player")
 
 module.exports = async function (req, res){
     const team = req._team
 
-    const teamStats = await Stat.findById(team.stats)
 
-    if(teamStats.matches > 0) return res.status(400).json({message: "Not able to delete."})
+    if(team.matches.length > 0) return res.status(400).json({message: "Not able to delete."})
 
     const deletedTeam = await Team.findByIdAndDelete(team._id)
 
