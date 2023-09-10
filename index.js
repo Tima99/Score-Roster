@@ -8,6 +8,7 @@ const entryRoutes       = require("./routes/entryRoutes");
 const playerRoutes      = require("./routes/playerRoutes");
 const teamRoutes        = require("./routes/teamRoutes");
 const matchRoutes       = require("./routes/matchRoutes");
+const statsRoutes       = require("./routes/statsRoutes");
 const protectedRoutes   = require('./routes/protectedRoutes')
 const { entryRateLimit , globalRateLimit }= require("./config/rateLimits")
 const {
@@ -27,6 +28,7 @@ app.use(limiter(globalRateLimit))
 app.use("/api", playerRoutes);
 app.use("/api", teamRoutes);
 app.use("/api", matchRoutes);
+app.use("/api", statsRoutes);
 
 app.use(limiter(entryRateLimit))
 app.use("/api", entryRoutes);
@@ -69,7 +71,8 @@ const routes = [
     ...matchRoutes.stack,
     ...verifiedUsers.stack, 
     ...teamAdmin.stack, 
-    ...adminOrCaptain.stack
+    ...adminOrCaptain.stack,
+    ...statsRoutes.stack
 ]
 routes.forEach(layer => {
     if (layer.route) {
