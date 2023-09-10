@@ -1,6 +1,6 @@
 
 const protectedRoutes = {
-    verifiedUsers   : require('./verifiedUsers'),
+    verifiedUsers   : require('./users'),
     adminOrCaptain  : require('./adminOrCaptain'),
     teamAdmin       : require('./teamAdmin'),
 }

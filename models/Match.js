@@ -1,12 +1,25 @@
 const mongoose = require("mongoose");
 
-const { ObjectId } = mongoose.Types.Schema;
+const { ObjectId } = mongoose.Schema.Types;
 
 const playerSchema = new mongoose.Schema({
     _id: { type: ObjectId, ref: "Player" },
     name: String,
     avatar: String,
+    role: { type: String, enum: ['raider', 'defender', 'all-rounder'], lowercase: true},
     stats: { type: ObjectId, ref: "Stat" },
+});
+
+const teamSchema = new mongoose.Schema({
+    // oid of teamA and teamB
+    _id: {type: ObjectId, ref: "Team", immutable: true, required: true },
+    // selected players of teamA and teamB 
+    squad: [{
+        player: playerSchema, 
+        stats: {type: ObjectId, ref: 'Stat'}
+    }],
+    // captain oid of teamA and teamB
+    captain:  {type: ObjectId, ref: 'Player', immutable: true}
 });
 
 const scoringSchema = new mongoose.Schema({
@@ -40,27 +53,56 @@ const scoringSchema = new mongoose.Schema({
 
 const matchSchema = new mongoose.Schema(
     {
-        teamA: { type: ObjectId, ref: "Team" },
-        teamB: { type: ObjectId, ref: "Team" },
-        squadA: [{player: playerSchema, stats: {type: ObjectId, ref: 'Stat'}}],
-        squadB: [{player: playerSchema, stats: {type: ObjectId, ref: 'Stat'}}],
-        scorer: {type: ObjectId, ref: 'Player'},
+        teamA: teamSchema,
+        teamB: teamSchema,
+        // date and time of match 
+        scheduleTime: {type: Date, defualt: Date.now(), immutable: true},
+        // ground location on which match played
+        groundLocate: String,
+        // player do scoring
+        scorer: {type: ObjectId, ref: 'Player', required: true},
+        // toss won by which team and what his captain select
         toss: { 
             won: {type: ObjectId, ref: 'Team'}, 
-            select: {type: String, enum : ['raid', 'defend']}  
+            select: {type: String, enum : ['raid', 'defend'], lowercase: true}  
         },
-        // total match duration (time in seconds)
-        tDuration: Number,
+        // total match duration (time in seconds) default is 2700 seconds == 45mins
+        tDuration: {type: Number, default: 2700},
         remainDuration: Number,
-        // time in seconds
-        perRaidDuration: Number,
-        breaksCount: Number,
+        // time in seconds (default is 30 seconds)
+        perRaidDuration: {type: Number, default: 30},
+        // number of breaks and time interval foreach breaks between match
+        breaks: {
+            count: {type: Number, defualt: 0},
+            // time in secs e.g, [1800, 900]
+            /**
+             * if total match duration is 3600secs = 1hrs
+             * breaks count is 2 
+             * so their time interval for breaks as follows:
+             *  1 break after 1800(30mins) from game start 
+             * 2 break after 900(15mins) from first interval
+             * Note: if their is 0 breaks count , breaks interval array is empty than
+             */
+            interval: [Number]
+        },
         // indexes of array represents count of raid
         // for example: 0 index means 1 raid of raider
         scoring: [scoringSchema]
     },
     { timestamps: true }
 );
+
+matchSchema.pre("save", async function(){
+    try{
+        console.log("Saving docs...")
+        this.remainDuration = this.tDuration
+        // define Date.now() in scheduleTime if its false
+        !!this.scheduleTime || (this.scheduleTime = Date.now())
+        return this
+    }catch(err){
+        return Promise.reject(err)
+    }
+})
 
 const Match = mongoose.model("Match", matchSchema, "matches");
 
