@@ -2,7 +2,7 @@ const routes = require("express").Router()
 const {
     CreatePlayer,
     FetchPlayer,
-    getPlayerMatchesList,
+    FetchMatches,
     getPlayerTeamsList,
     UpdatePlayerAvatar, 
     UpdatePlayerDetails
@@ -27,7 +27,7 @@ routes.put('/players/:playerId/avatar', upload.single('avatar'), UpdatePlayerAva
 routes.put('/players/:playerId/details', UpdatePlayerDetails)
 
 // Get matches list for a specific player
-routes.get('/players/:playerId/matches', getPlayerMatchesList)
+routes.get('/players/:playerId/matches', FetchMatches)
 
 // Get matches list for a specific player
 routes.get('/players/:playerId/teams', getPlayerTeamsList)

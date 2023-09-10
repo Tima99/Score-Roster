@@ -15,7 +15,7 @@ const teamSchema = new mongoose.Schema({
     admin: { type: mongoose.Schema.Types.ObjectId, ref: 'Player'},
     captain: { type: mongoose.Schema.Types.ObjectId, ref: 'Player'},
     players: [teamPlayerSchema],
-    pastPlayers: [teamPlayerSchema], // store players those removed from the team 
+    pastPlayers: {type: [teamPlayerSchema], select: 0}, // store players those removed from the team 
     matches: [ {type: mongoose.Schema.Types.ObjectId, ref: 'Match'} ],
     stats: { type: mongoose.Schema.Types.ObjectId, ref: 'Stat'}
 }, {timestamps: true})

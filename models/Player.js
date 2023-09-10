@@ -19,7 +19,7 @@ const playerSchema = new mongoose.Schema({
     teams: [ { type: mongoose.Schema.Types.ObjectId , ref: 'Team'} ],
 
     // if player remove or exit from team it will go to pastTeams array from teams arrays
-    pastTeams: [ { type: mongoose.Schema.Types.ObjectId , ref: 'Team'} ],
+    pastTeams: [ { type: mongoose.Schema.Types.ObjectId , ref: 'Team', select: 0} ],
 
     matches: [ { type: mongoose.Schema.Types.ObjectId , ref: 'Match'} ],
     

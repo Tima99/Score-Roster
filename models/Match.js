@@ -87,7 +87,9 @@ const matchSchema = new mongoose.Schema(
         },
         // indexes of array represents count of raid
         // for example: 0 index means 1 raid of raider
-        scoring: [scoringSchema]
+        scoring: [scoringSchema],
+        // oid of winner team of this match
+        winner: {type: ObjectId, ref: 'Team'}
     },
     { timestamps: true }
 );

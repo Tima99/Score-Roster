@@ -6,4 +6,5 @@ module.exports = {
     AddPlayers: require("./AddPlayers"),
     RemovePlayers: require("./RemovePlayers"),
     DeleteTeam: require("./DeleteTeam"),
+    FetchMatches: require("./FetchMatches"),
 }
