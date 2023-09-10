@@ -7,17 +7,17 @@ const playerSchema = new mongoose.Schema({
     name: String,
     avatar: String,
     role: { type: String, enum: ['raider', 'defender', 'all-rounder'], lowercase: true},
+    // player personal stats
     stats: { type: ObjectId, ref: "Stat" },
+    // stats of player for team in which he playing
+    teamStats: { type: ObjectId, ref: "Stat" }
 });
 
 const teamSchema = new mongoose.Schema({
     // oid of teamA and teamB
     _id: {type: ObjectId, ref: "Team", immutable: true, required: true },
     // selected players of teamA and teamB 
-    squad: [{
-        player: playerSchema, 
-        stats: {type: ObjectId, ref: 'Stat'}
-    }],
+    squad: [playerSchema],
     // captain oid of teamA and teamB
     captain:  {type: ObjectId, ref: 'Player', immutable: true}
 });

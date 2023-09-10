@@ -4,7 +4,7 @@ const FetchTeam = {
     Players : async function(req, res) {
         const { teamId } = req.params;
     
-        const team = await Team.findById(teamId, {matches: 0, stats: 0}).populatePlayers();
+        const team = await Team.findById(teamId, {matches: 0}).populatePlayers();
     
         res.json({ team });
     },

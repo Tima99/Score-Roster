@@ -25,11 +25,11 @@ teamSchema.query.populatePlayers = async function(){
     try{
         let team = await this.populate({
             path: "players._id",
-            select: "name avatar"
+            select: "name avatar stats"
         })
 
         const structurePlayers = team.players.map( player => {
-            return {...player._id.toObject(), stats: player.stats}
+            return {...player._id.toObject(), teamStats: player.stats}
         })
         
         team = team.toObject()
