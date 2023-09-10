@@ -8,4 +8,5 @@ module.exports = {
     DeleteTeam: require("./DeleteTeam"),
     FetchMatches: require("./FetchMatches"),
     RefreshSecurityCode: require("./RefreshSecurityCode"),
+    ChangeAuth: require("./ChangeAuth"),
 }

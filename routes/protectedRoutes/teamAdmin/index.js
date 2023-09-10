@@ -5,10 +5,14 @@ const upload  = multer({ storage })
 const {
     UpdateTeamLogo,
     UpdateTeamDetails,
-    DeleteTeam
+    DeleteTeam,
+    ChangeAuth
 } = require("../../../controllers/teamController")
 
 // only admin of team can modify team
+
+// change auth (admin or captain) of team
+routes.put('/teams/:teamId/auth', ChangeAuth)
 
 // Update a specific Team logo
 routes.put('/teams/:teamId/logo', upload.single('logo'), UpdateTeamLogo)

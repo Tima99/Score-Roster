@@ -93,7 +93,7 @@ teamSchema.methods.addPlayers = async function(playersIdArr){
             }
 
             // is player already played for this team 
-            const pastPlayerIdx = this.pastPlayers.findIndex(({_id}) => isEquals(_id, oid))
+            const pastPlayerIdx = Array.isArray(this.pastPlayers) ? this.pastPlayers.findIndex(({_id}) => isEquals(_id, oid)) : -1
             if(pastPlayerIdx !== -1){
                 // move past player from pastPlayers to players array
                 const pastPly = this.pastPlayers.splice(pastPlayerIdx, 1) // splice returns remove items in array
