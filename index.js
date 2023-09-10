@@ -7,7 +7,14 @@ const { PORT }          = require("./config");
 const entryRoutes       = require("./routes/entryRoutes");
 const playerRoutes      = require("./routes/playerRoutes");
 const teamRoutes        = require("./routes/teamRoutes");
-const { entryRateLimit }= require("./config/rateLimits")
+const matchRoutes       = require("./routes/matchRoutes");
+const protectedRoutes   = require('./routes/protectedRoutes')
+const { entryRateLimit , globalRateLimit }= require("./config/rateLimits")
+const {
+    verifyAccessToken, 
+    verifyTeamAdmin, 
+    isAdminOrCaptain
+} = require("./middlewares")
 
 const app = express();
 
@@ -16,10 +23,24 @@ app.use(express.json());
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }))
 
+app.use(limiter(globalRateLimit))
 app.use("/api", playerRoutes);
-
-app.use("/api", limiter(entryRateLimit), entryRoutes);
 app.use("/api", teamRoutes);
+app.use("/api", matchRoutes);
+
+app.use(limiter(entryRateLimit))
+app.use("/api", entryRoutes);
+
+// protected routes
+app.use(verifyAccessToken)
+app.use('/api', protectedRoutes.verifiedUsers)
+
+app.use(isAdminOrCaptain)
+app.use('/api', protectedRoutes.adminOrCaptain)
+
+app.use(verifyTeamAdmin)
+app.use('/api', protectedRoutes.teamAdmin)
+
 app.use((err, req, res, next) => {
     const errBoundary = '='.repeat(25)
     console.error(`${errBoundary}\n${err.stack}\n${errBoundary}`);
@@ -40,7 +61,16 @@ function asyncErrorsWraper(handler) {
     };
 }
 
-const routes = [...entryRoutes.stack, ...playerRoutes.stack, ...teamRoutes.stack]
+const { verifiedUsers, teamAdmin, adminOrCaptain } = protectedRoutes
+const routes = [
+    ...entryRoutes.stack,
+    ...playerRoutes.stack, 
+    ...teamRoutes.stack, 
+    ...matchRoutes.stack,
+    ...verifiedUsers.stack, 
+    ...teamAdmin.stack, 
+    ...adminOrCaptain.stack
+]
 routes.forEach(layer => {
     if (layer.route) {
         layer.route.stack.forEach((routeHandler) => {
