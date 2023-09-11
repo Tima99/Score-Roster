@@ -12,7 +12,6 @@ async function getPlayerMatchesList(req, res){
 
     const skip = (page - 1) * size
     const diff = totalMatches - (page * size)
-    console.log({ diff, page, size, totalMatches, skip})
     const start = diff >= 0 ? page * size : totalMatches - skip > 0 ? totalMatches : "Page not found"
     if(typeof start === "string" ) return res.status(422).json({ complete: true })
 
@@ -22,7 +21,9 @@ async function getPlayerMatchesList(req, res){
     const matches = await Match.find({ _id : { $in : matchesOid }}).populate({
         path: 'teamA._id teamB._id',
         select: 'name logo players',
-
+        populate: {
+            path: 'players._id',
+        }
     })
 
     res.json({ matches , complete: false, page, size, totalCount: matches.length })

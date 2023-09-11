@@ -22,6 +22,9 @@ async function FetchMatchesList(req, res){
     const matches = await Match.find({ _id : { $in : matchesOid }}).populate({
         path: 'teamA._id teamB._id',
         select: 'name logo players',
+        populate: {
+            path: 'players._id',
+        }
     })
 
     res.json({ matches , complete: false, page, size, totalCount: matches.length })
