@@ -19,12 +19,6 @@ async function AuthenticateUser(req, res) {
     }
 
     async function initRefreshToken(token){
-        // save to cookie 
-        res.cookie(REFRESH_TOKEN.NAME, token, { 
-            httpOnly: true, 
-            secure:  NODE_ENV === "production",
-            sameSite: 'None'
-        });
         // store refresh_token in database for security concern
         await user.storeRefreshToken(token, device.agent, device.origin)
     }
@@ -52,22 +46,23 @@ async function AuthenticateUser(req, res) {
       user.password = hashedPassword;
       await user.save();  
       
-      // Set the token in a cookie (you may want to use a secure option in production) and save to db
+      // we don't Set the token in a cookie as we develop app  (you may want to use a secure option in production) and save to db
+      // app has not a feture of cookie instead of saving refresh_token, we return as response
       initRefreshToken(refresh_token)  
 
-      // send access_token to client and refresh_token saved to cookie already
-      return res.status(201).json({ access_token, message: 'Password saved and token generated' });
+      // send access_token and refresh_token to client 
+      return res.status(201).json({ refresh_token, access_token, message: 'Password saved and token generated' });
     } 
     // If the user has a password, compare it with the given password
     const passwordMatch = await user.verifyPassword(password)
     
     if(!passwordMatch) return res.status(401).json({ message: 'Password does not match' }); 
     
-    // Set the token in a cookie (you may want to use a secure option in production) and save to db
+    // save refresh_token to db
     initRefreshToken(refresh_token)  
 
-    // send access_token to client and refresh_token saved to cookie already
-    return res.status(200).json({ access_token, message: 'Password matched and token generated' });  
+    // send refresh_token and access_token to client and refresh_token saved to db already
+    return res.status(200).json({ refresh_token, access_token, message: 'Password matched and token generated' });  
 }
   
 module.exports = AuthenticateUser

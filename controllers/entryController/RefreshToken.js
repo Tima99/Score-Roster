@@ -6,12 +6,14 @@ const User = require("../../models/User");
 const jwt  = require("jsonwebtoken");
 
 async function RefreshToken(req, res) {
-    const cookies       = req.cookies;
-    const refresh_token = cookies?.[REFRESH_TOKEN.NAME];
+    const bearerToken = req.headers['authorization' || 'Authorization']
+    // remove Bearer[space] or bearer[space] 
+    const refresh_token = bearerToken?.replace(/^Bearer\s+/i, '');
+    if (!refresh_token) return res.sendStatus(403);
+    
     const agent         = req.headers["user-agent" || "User-Agent"]
     const origin        = req.ip
 
-    if (!refresh_token) return res.sendStatus(403);
 
     const user = jwt.verify(refresh_token, REFRESH_TOKEN_SECRET);
 
@@ -27,7 +29,6 @@ async function RefreshToken(req, res) {
 
     // if hasRefreshToken is null clear cookie
     if (!hasRefreshToken) {
-        res.clearCookie(REFRESH_TOKEN.NAME);
         return res.sendStatus(401);
     }
 
