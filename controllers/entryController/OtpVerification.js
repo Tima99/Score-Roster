@@ -18,8 +18,12 @@ async function OtpVerified(req, res, next){
 
     // console.log( user.verificationCodeExpires.toLocaleString())
         
-    if(Date.now() >= user.verificationCodeExpires.getTime()) return res.status(401).json({ message: "OTP has expired"})
-    if(user.verificationCode !== otp) return res.status(401).json({message: "OTP is not valid"})
+    if(Date.now() >= user.verificationCodeExpires.getTime()) {
+      user.verificationCode = null
+      await user.save()
+      return res.status(401).json({ message: "OTP has expired"})
+    }
+    if(user.verificationCode !== otp) return res.status(401).json({message: "OTP is not correct"})
 
 
     user.verificationCode = null
