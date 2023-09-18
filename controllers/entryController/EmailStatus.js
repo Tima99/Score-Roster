@@ -20,7 +20,7 @@ async function isEmailVerified(req, res){
     const { email } = req.params
     const user = await User.findOne({ email }) || await User.create({ email })
 
-    if(user && user.isEmailVerified) return res.status(201).json({status: true, message: "Email verified", hasPassword: !!user.password })
+    if(user && user.isEmailVerified) return res.status(200).json({status: true, message: "Email verified", hasPassword: !!user.password })
       
     const otpExpirationTime = NUM.OTP_EXPIRE_TIME; // 10 minutes
     const { OTP, expirationTime } = GenerateOTP(otpExpirationTime)

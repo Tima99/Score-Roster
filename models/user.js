@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema({
 // Define a virtual property to serve as a unified identifier for username and email
 // user.identifier serves user._id if user.email or user.username is undefined or vice-versa
 userSchema.virtual('identifier').get(function() {
-  return this.username || this.email || this._id;
+  return this.email || this._id;
 });
 
 
