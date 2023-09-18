@@ -7,7 +7,8 @@ const {
     AuthenticateUser,
     ResendOtp,
     ResetPassword,
-    RefreshToken
+    RefreshToken,
+    LogoutController
 } = require("../controllers/entryController");
 const limiter = require("express-rate-limit")
 const { resendOtpLimit } = require("../config/rateLimits")
@@ -35,5 +36,8 @@ routes.get("/resend/otp/:email",
 
 // generate new access_token with below route
 routes.get('/refresh/token', RefreshToken)
+
+// logout user
+routes.get('/logout', LogoutController)
 
 module.exports = routes;
