@@ -15,7 +15,7 @@ const emailOTP    = require("../../utils/sendEmail")
 const GenerateOTP = require("../../utils/generateOTP")
 const { NUM }     = require('../../constants');
 
-async function isEmailVerified(req, res){
+async function EmailStatus(req, res){
   
     const { email } = req.params
     const user = await User.findOne({ email }) || await User.create({ email })
@@ -38,4 +38,4 @@ async function isEmailVerified(req, res){
 } 
 
 
-module.exports = isEmailVerified
+module.exports = EmailStatus
