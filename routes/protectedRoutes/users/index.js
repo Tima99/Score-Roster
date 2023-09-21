@@ -12,6 +12,11 @@ const {
     CreateMatch
 } = require("../../../controllers/matchController")
 
+const { GetUser } = require("../../../controllers/entryController")
+
+// ^Users routes
+routes.get('/user', GetUser)
+
 // ^Players routes
 // verify team security code 
 routes.post('/verify/security', VerifySecurityCode)

@@ -13,5 +13,6 @@ module.exports = {
     EmailVerified,
     ResetPasswordVerified,
     RefreshToken: require('./RefreshToken'),
-    LogoutController: require('./LogoutController')
+    LogoutController: require('./LogoutController'),
+    GetUser: require('./GetUser')
 };
